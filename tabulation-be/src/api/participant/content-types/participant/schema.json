@@ -1,0 +1,73 @@
+{
+  "kind": "collectionType",
+  "collectionName": "participants",
+  "info": {
+    "singularName": "participant",
+    "pluralName": "participants",
+    "displayName": "Participant"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "number": {
+      "type": "integer"
+    },
+    "participant_status": {
+      "type": "enumeration",
+      "default": "active",
+      "enum": [
+        "active",
+        "eliminated"
+      ]
+    },
+    "gender": {
+      "type": "enumeration",
+      "enum": [
+        "male",
+        "female"
+      ]
+    },
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event",
+      "inversedBy": "participants"
+    },
+    "headshot": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "department": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::department.department",
+      "inversedBy": "participants"
+    },
+    "scores": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::score.score",
+      "mappedBy": "participant"
+    },
+    "eliminated_at_segment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::segment.segment",
+      "inversedBy": "eliminated_participants"
+    },
+    "notes": {
+      "type": "text"
+    }
+  }
+}

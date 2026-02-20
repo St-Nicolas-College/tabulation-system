@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categories",
+  "info": {
+    "singularName": "category",
+    "pluralName": "categories",
+    "displayName": "Category"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "scores": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::score.score",
+      "mappedBy": "category"
+    },
+    "weight": {
+      "type": "decimal"
+    },
+    "active": {
+      "type": "boolean",
+      "required": false,
+      "default": true
+    },
+    "segment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::segment.segment",
+      "inversedBy": "categories"
+    },
+    "active_judges": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::judge.judge",
+      "inversedBy": "categories"
+    },
+    "locked": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

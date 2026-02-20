@@ -1,0 +1,86 @@
+{
+  "kind": "collectionType",
+  "collectionName": "segments",
+  "info": {
+    "singularName": "segment",
+    "pluralName": "segments",
+    "displayName": "Segment"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    },
+    "weight": {
+      "type": "decimal",
+      "required": true,
+      "min": 0,
+      "max": 1
+    },
+    "segment_status": {
+      "type": "enumeration",
+      "required": false,
+      "default": "draft",
+      "enum": [
+        "draft",
+        "inactive",
+        "active",
+        "closed"
+      ]
+    },
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event",
+      "inversedBy": "segments"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::category.category",
+      "mappedBy": "segment"
+    },
+    "scores": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::score.score",
+      "mappedBy": "segment"
+    },
+    "eliminated_participants": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::participant.participant",
+      "mappedBy": "eliminated_at_segment"
+    },
+    "advancement_type": {
+      "type": "enumeration",
+      "default": "all",
+      "enum": [
+        "all",
+        "top_n",
+        "threshold",
+        "manual"
+      ]
+    },
+    "advancement_value": {
+      "type": "integer"
+    },
+    "scoring_mode": {
+      "type": "enumeration",
+      "default": "normalized",
+      "enum": [
+        "normalized",
+        "raw_category"
+      ]
+    }
+  }
+}

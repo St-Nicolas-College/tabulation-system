@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "events",
+  "info": {
+    "singularName": "event",
+    "pluralName": "events",
+    "displayName": "Event"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "judges": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::judge.judge",
+      "mappedBy": "events"
+    },
+    "participants": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::participant.participant",
+      "mappedBy": "event"
+    },
+    "scores": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::score.score",
+      "mappedBy": "event"
+    },
+    "active": {
+      "type": "boolean",
+      "default": false
+    },
+    "judge_requests": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::judge-request.judge-request",
+      "mappedBy": "event"
+    },
+    "event_status": {
+      "type": "enumeration",
+      "default": "draft",
+      "enum": [
+        "draft",
+        "active",
+        "inactive",
+        "finished"
+      ]
+    },
+    "segments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::segment.segment",
+      "mappedBy": "event"
+    }
+  }
+}

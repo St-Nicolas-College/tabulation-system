@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "scores",
+  "info": {
+    "singularName": "score",
+    "pluralName": "scores",
+    "displayName": "Score"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "value": {
+      "type": "decimal",
+      "required": true,
+      "default": 0
+    },
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event",
+      "inversedBy": "scores"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "scores"
+    },
+    "participant": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::participant.participant",
+      "inversedBy": "scores"
+    },
+    "judge": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::judge.judge",
+      "inversedBy": "scores"
+    },
+    "segment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::segment.segment",
+      "inversedBy": "scores"
+    }
+  }
+}
