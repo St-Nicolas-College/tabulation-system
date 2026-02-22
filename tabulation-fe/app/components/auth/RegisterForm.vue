@@ -67,6 +67,7 @@
         class="mt-4"
         type="submit"
         variant="elevated"
+        color="green"
         block
         :loading="authStore.isLoading"
       >

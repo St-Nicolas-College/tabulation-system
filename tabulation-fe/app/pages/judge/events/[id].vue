@@ -34,7 +34,7 @@
 
     <v-row>
       <v-col cols="12">
-        <v-card class="pa-4">
+        <v-card class="pa-4 rounded-xl" elevation="0">
           <v-card-title class="d-flex justify-space-between text-h5">
             <span>Participant Scores</span>
             <v-btn
@@ -51,7 +51,7 @@
               Score {{ currentSegmentName }}
             </v-btn>
           </v-card-title>
-          <v-card-text>
+    
             <v-tabs
               v-model="activeSegmentTab"
               background-color="primary"
@@ -259,7 +259,7 @@
                 </v-card>
               </v-window-item>
             </v-window>
-          </v-card-text>
+
         </v-card>
       </v-col>
     </v-row>
@@ -270,6 +270,7 @@
       :scrim="true"
       persistent
       max-width="1400px"
+      scrollable
     >
       <v-card>
         <v-toolbar
@@ -627,3 +628,23 @@ const segmentsForTabs = computed(() => {
 
 const participants = ref<ParticipantWithScores[]>([])
 </script>
+<style scoped>
+:deep() .v-table .v-table__wrapper>table>thead>tr>th {
+  /* border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-bottom: thick solid rgba(var(--v-border-color), var(--v-border-opacity)); */
+  font-weight: bold;
+
+}
+
+/* :deep() .v-table .v-table__wrapper>table>tbody>tr>td:not(:last-child),
+.v-table .v-table__wrapper>table>tbody>tr>th:not(:last-child) {
+  border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+} */
+/* :deep() .v-table .v-table__wrapper>table>tbody>tr:nth-child(even) {
+  background-color: #f2f2f2;
+} */
+
+:deep() .v-table .v-table__wrapper>table>tbody>tr:hover {
+  background-color: #f2f2f2;
+}
+</style>

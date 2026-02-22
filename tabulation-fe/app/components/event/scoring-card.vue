@@ -1,66 +1,29 @@
 <template>
   <v-card flat>
     <v-card-text>
-      <v-tabs
-        v-model="activeGenderTab"
-        background-color="secondary"
-        color="green"
-        show-arrows
-        dark
-      >
-        <v-tab
-          v-for="gender in genders"
-          :key="gender.key"
-          :value="gender.key"
-        >
+      <v-tabs v-model="activeGenderTab" background-color="secondary" color="green" show-arrows dark>
+        <v-tab v-for="gender in genders" :key="gender.key" :value="gender.key">
           {{ gender.label }}
         </v-tab>
       </v-tabs>
-
+      <v-divider></v-divider>
       <v-window v-model="activeGenderTab">
-        <v-window-item
-          v-for="gender in genders"
-          :key="gender.key"
-          :value="gender.key"
-        >
+        <v-window-item v-for="gender in genders" :key="gender.key" :value="gender.key">
           <v-form @submit.prevent="submitScores(segment)">
-            <v-data-table
-              v-if="!smAndDown"
-              :headers="getTableHeaders(segment)"
-              :items="getParticipantsByGender(gender.key, segment)"
-              item-value="id"
-              class="elevation-1 text-body-1"
-              :loading="isLoading"
-              :readonly="
-                segment.segment_status === 'inactive' || segment.segment_status === 'closed'
-              "
-            >
+            <v-data-table v-if="!smAndDown" :headers="getTableHeaders(segment)"
+              :items="getParticipantsByGender(gender.key, segment)" item-value="id" class="elevation-1 text-body-1"
+              :loading="isLoading" :readonly="segment.segment_status === 'inactive' || segment.segment_status === 'closed'
+                ">
               <template #item.name="{ item }">
                 <div class="d-flex align-center py-2">
-                  <v-avatar
-                    v-if="item.headshot?.formats?.thumbnail?.url"
-                    :image="getStrapiUrl(item.headshot.formats.thumbnail.url)"
-                    icon="mdi-account"
-                    class="mr-3"
-                    size="80"
-                    @click="showImagePreview(item.headshot.url)"
-                  />
-                  <v-avatar
-                    v-else
-                    icon="mdi-account"
-                    class="mr-3"
-                    size="40"
-                  />
-                  <v-chip
-                    v-if="
-                      item.participant_status === 'eliminated' &&
-                      item.eliminated_at_segment?.documentId === segment.documentId
-                    "
-                    color="red"
-                    class="mr-2"
-                    size="small"
-                    label
-                  >
+                  <v-avatar v-if="item.headshot?.formats?.thumbnail?.url"
+                    :image="getStrapiUrl(item.headshot.formats.thumbnail.url)" icon="mdi-account" class="mr-3" size="80"
+                    @click="showImagePreview(item.headshot.url)" />
+                  <v-avatar v-else icon="mdi-account" class="mr-3" size="40" />
+                  <v-chip v-if="
+                    item.participant_status === 'eliminated' &&
+                    item.eliminated_at_segment?.documentId === segment.documentId
+                  " color="red" class="mr-2" size="small" label>
                     E
                   </v-chip>
                   <div class="font-weight-bold">{{ item.name }}</div>
@@ -71,44 +34,26 @@
                 {{ item.department?.name || 'N/A' }}
               </template>
 
-              <template
-                v-for="category in getActiveCategories(segment)"
-                :key="category.documentId"
-                #[`item.category_${category.documentId}`]="{ item }"
-              >
-                <div class="my-2">
-                  <span v-if="props.readonly">
-                    {{ item.scores[category.documentId] ?? '-' }}
-                  </span>
-                  <v-text-field
-                    v-else
-                    v-model.number="item.scores[category.documentId]"
-                    class="flex-shrink-0 score-input"
-                    type="number"
-                    variant="outlined"
-                    density="compact"
-                    :rules="getScoreRules(category.weight * 100)"
-                    validate-on="input"
-                    min="0"
-                    :max="category.weight * 100"
-                    step="1"
-                    maxlength="4"
-                    style="max-width: 80px"
-                    :readonly="
-                      category.locked ||
-                      segment.segment_status === 'closed' ||
-                      segment.segment_status === 'inactive' ||
-                      item.participant_status === 'eliminated'
-                    "
-                    @keydown="blockInvalidKeys"
-                  />
+              <template v-for="category in getActiveCategories(segment)" :key="category.documentId"
+                #[`item.category_${category.documentId}`]="{ item }">
+                <div class="d-flex justify-center">
+                  <div class="mt-6">
+                    <span v-if="props.readonly">
+                      {{ item.scores[category.documentId] ?? '-' }}
+                    </span>
+                    <v-text-field v-else v-model.number="item.scores[category.documentId]"
+                      class="flex-shrink-0 score-input" type="number" variant="outlined"
+                      :rules="getScoreRules(category.weight * 100)" validate-on="input" min="0"
+                      :max="category.weight * 100" step="1" maxlength="4" style="max-width: 80px" :readonly="category.locked ||
+                        segment.segment_status === 'closed' ||
+                        segment.segment_status === 'inactive' ||
+                        item.participant_status === 'eliminated'
+                        " @keydown="blockInvalidKeys" />
+                  </div>
                 </div>
               </template>
 
-              <template
-                #item.total_score="{ item }"
-                v-if="isAdmin"
-              >
+              <template #item.total_score="{ item }" v-if="isAdmin">
                 <div class="font-weight-bold">
                   {{ calculateTotalScore(item, segment) }}
                 </div>
@@ -118,16 +63,10 @@
                 <div class="pa-4 text-center">No participants found for this gender.</div>
               </template>
 
-              <template
-                v-for="category in getActiveCategories(segment)"
-                :key="category.documentId"
-                #[`header.category_${category.documentId}`]="{ column }"
-              >
+              <template v-for="category in getActiveCategories(segment)" :key="category.documentId"
+                #[`header.category_${category.documentId}`]="{ column }">
                 <div class="d-flex ga-2 align-start">
-                  <v-icon
-                    v-if="category.locked"
-                    size="small"
-                  >
+                  <v-icon v-if="category.locked" size="small">
                     mdi-lock
                   </v-icon>
                   {{ column.title }}
@@ -136,32 +75,15 @@
             </v-data-table>
 
             <!-- Mobile View -->
-            <v-list
-              v-else
-              lines="three"
-            >
-              <v-list-item
-                v-for="item in getParticipantsByGender(gender.key, segment)"
-                :key="item.id"
-                class="pa-0"
-              >
+            <v-list v-else lines="three">
+              <v-list-item v-for="item in getParticipantsByGender(gender.key, segment)" :key="item.id" class="pa-0">
                 <v-card>
                   <v-card-title class="d-flex align-start flex-wrap">
                     <div class="d-flex align-center">
-                      <v-avatar
-                        v-if="item.headshot?.formats?.thumbnail?.url"
-                        :image="getStrapiUrl(item.headshot.formats.thumbnail.url)"
-                        icon="mdi-account"
-                        class="mr-3"
-                        size="40"
-                        @click="showImagePreview(item.headshot.url)"
-                      />
-                      <v-avatar
-                        v-else
-                        icon="mdi-account"
-                        class="mr-3"
-                        size="40"
-                      />
+                      <v-avatar v-if="item.headshot?.formats?.thumbnail?.url"
+                        :image="getStrapiUrl(item.headshot.formats.thumbnail.url)" icon="mdi-account" class="mr-3"
+                        size="40" @click="showImagePreview(item.headshot.url)" />
+                      <v-avatar v-else icon="mdi-account" class="mr-3" size="40" />
                       <div>
                         <div class="font-weight-bold text-wrap text-subtitle-1">
                           {{ item.name }}
@@ -171,31 +93,18 @@
                         </div>
                       </div>
                     </div>
-                    <v-chip
-                      v-if="
-                        item.participant_status === 'eliminated' &&
-                        item.eliminated_at_segment?.documentId === segment.documentId
-                      "
-                      color="red"
-                      class="mt-1 ml-4"
-                      label
-                    >
+                    <v-chip v-if="
+                      item.participant_status === 'eliminated' &&
+                      item.eliminated_at_segment?.documentId === segment.documentId
+                    " color="red" class="mt-1 ml-4" label>
                       E
                     </v-chip>
                   </v-card-title>
                   <v-card-text>
-                    <div
-                      v-for="category in getActiveCategories(segment)"
-                      :key="category.documentId"
-                      align="center"
-                      class="d-flex justify-space-between my-2 align-center ga-3 flex-wrap"
-                    >
+                    <div v-for="category in getActiveCategories(segment)" :key="category.documentId" align="center"
+                      class="d-flex justify-space-between my-2 align-center ga-3 flex-wrap">
                       <div class="text-subtitle-1">
-                        <v-icon
-                          v-if="category.locked"
-                          size="small"
-                          class="mr-1"
-                        >
+                        <v-icon v-if="category.locked" size="small" class="mr-1">
                           mdi-lock
                         </v-icon>
                         {{ category.name }} ({{ (category.weight * 100).toFixed(0) }}%)
@@ -206,27 +115,14 @@
                         </span>
                       </div>
                       <div v-else>
-                        <v-text-field
-                          align="end"
-                          class="ml-auto flex-shrink-0 score-input"
-                          v-model.number="item.scores[category.documentId]"
-                          type="number"
-                          variant="outlined"
-                          density="compact"
-                          :rules="getScoreRules(category.weight * 100)"
-                          validate-on="input"
-                          min="0"
-                          :max="category.weight * 100"
-                          step="1"
-                          maxlength="4"
-                          style="max-width: 80px"
-                          :readonly="
-                            category.locked ||
+                        <v-text-field align="end" class="ml-auto flex-shrink-0 score-input"
+                          v-model.number="item.scores[category.documentId]" type="number" variant="outlined"
+                          density="compact" :rules="getScoreRules(category.weight * 100)" validate-on="input" min="0"
+                          :max="category.weight * 100" step="1" maxlength="4" style="max-width: 80px" :readonly="category.locked ||
                             segment.segment_status === 'closed' ||
                             segment.segment_status === 'inactive' ||
                             item.participant_status === 'eliminated'
-                          "
-                        />
+                            " />
                       </div>
                     </div>
                   </v-card-text>
@@ -242,20 +138,11 @@
 
             <v-card-actions v-if="!props.readonly">
               <v-spacer />
-              <v-btn
-                variant="text"
-                @click="$emit('cancel-scoring')"
-              >
+              <v-btn variant="elevated" @click="$emit('cancel-scoring')">
                 Cancel
               </v-btn>
-              <v-btn
-                v-if="segment.segment_status !== 'closed'"
-                type="submit"
-                color="green"
-                variant="flat"
-                class="text-wrap"
-                :loading="isLoading"
-              >
+              <v-btn v-if="segment.segment_status !== 'closed'" type="submit" color="green" variant="elevated"
+                class="text-wrap" :loading="isLoading">
                 Submit Scores for {{ segment.name }}
               </v-btn>
             </v-card-actions>
@@ -265,10 +152,7 @@
     </v-card-text>
   </v-card>
 
-  <ImagePreviewDialog
-    v-model="imagePreviewDialog"
-    :image-url="imagePreviewUrl"
-  />
+  <ImagePreviewDialog v-model="imagePreviewDialog" :image-url="imagePreviewUrl" />
 </template>
 
 <script setup lang="ts">
